@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 try:
     import json
 except ImportError:
@@ -43,9 +44,10 @@ class Fetcher:
         self.stockInfo[stockNm] = stockFrame
 
     def __join_frames(self, factor, makeFloat = True):
-        dates = pd.date_range(self.startDate, self.endDate)
-        df_base = pd.DataFrame(dates, columns=['Date'])
+        dates = pd.date_range(self.startDate, self.endDate, name = 'Date')
+        df_base = pd.DataFrame(dates)
         df_base.set_index('Date', inplace = True)
+        # sort the dataframe by time
         df_SPY = self.stockInfo['SPY'][[factor]].rename(columns = {factor: 'SPY'})
         df_base = df_base.join(df_SPY, how='inner')
 
@@ -55,10 +57,24 @@ class Fetcher:
                 df = df.rename(columns = {factor: stockNm})
                 df_base = df_base.join(df,how='inner')
 
-        self.df = df_base
+        self.df = df_base.sort()
         if makeFloat:
             self.df = self.df.astype(float)
 
     def get_dataframe(self, factor):
         self.__join_frames(factor)
         return self.df
+
+    def normalize_data(self, df):
+        df = df/ df.ix[0,:]
+        return df
+
+    def plot_dataframe(self, title = "Stock Prices", normalization = True):
+        if normalization:
+            df = self.normalize_data(self.df)
+        else:
+            df = self.df
+
+        ax = df.plot(title=title,fontsize = 12)
+        ax.set_xlabel("Date")
+        ax.set_ylabel("Price")
