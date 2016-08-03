@@ -23,9 +23,7 @@ class GlobalStats:
         return self.df.mode()
 
     def get_sharpe_ratio(self, risk_free_return = 0., num_trading_days = 252):
-        # TODO: Make it a dataframe simple operation instead of a for loop
         daily_returns = self.get_daily_returns()
-        daily_returns -= risk_free_return
         globalStats = GlobalStats(daily_returns)
         mean = globalStats.get_mean()
         std = globalStats.get_std()
@@ -34,10 +32,20 @@ class GlobalStats:
             print 'Daily Return for Stock %s --> Mean:%f, Std. Deviation:%f\n' %(stock,mean[stock],std[stock])
 
         print "\nSharpe Ratio (Determines Risk):"
-        sharpe_ratio = (mean/std) *  math.sqrt(num_trading_days)
+        sharpe_ratio = ((mean - risk_free_return)/std) *  math.sqrt(num_trading_days)
 
         return sharpe_ratio
 
+    def get_sharpe(self, risk_free_return = 0., num_trading_days = 252):
+        '''Function assumes that the dataframe fed to the constructor is
+            Daily return
+        '''
+        mean = self.get_mean()
+        std = self.get_std()
+
+        sharpe_ratio = ((mean - risk_free_return)/std) *  math.sqrt(num_trading_days)
+
+        return sharpe_ratio
 
 
     def get_daily_returns(self):
