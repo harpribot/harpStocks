@@ -10,7 +10,13 @@ from yahoo_finance import Share
 
 class Fetcher:
     def __init__(self, stockList):
-        self.stockList = stockList
+        if 'SPY' in stockList:
+            self.SPY_added = False
+            self.stockList = stockList
+        else:
+            self.SPY_added = True
+            stockList.append('SPY')
+            self.stockList = stockList
         self.stock = {}
         self.stockInfo = {}
         self.__fetch_stock_objects()
@@ -61,7 +67,8 @@ class Fetcher:
         # Do the gorward fill followed by backward fill
         self.df.fillna(method='ffill', inplace = True)
         self.df.fillna(method='bfill', inplace = True)
-
+        if self.SPY_added:
+            self.df.drop('SPY', axis=1, inplace=True)
         if makeFloat:
             self.df = self.df.astype(float)
 
