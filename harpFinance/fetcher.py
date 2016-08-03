@@ -58,6 +58,10 @@ class Fetcher:
                 df_base = df_base.join(df,how='inner')
 
         self.df = df_base.sort()
+        # Do the gorward fill followed by backward fill
+        self.df.fillna(method='ffill', inplace = True)
+        self.df.fillna(method='bfill', inplace = True)
+
         if makeFloat:
             self.df = self.df.astype(float)
 

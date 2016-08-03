@@ -28,6 +28,9 @@ class RollingStats:
         self.window = window
         self.roller = self.df.rolling(window = self.window, center = False)
 
+    def get_dataframe(self):
+        return self.df
+
     def get_rolling_mean(self):
         return self.roller.mean(), "Rolling Mean"
 
@@ -45,6 +48,34 @@ class RollingStats:
 
     def get_rolling_min(self):
         return self.roller.min(), "Rolling Min"
+
+
+    def get_daily_returns(self, plot_hist = False, nBins = 10, kurtosis = True):
+        plt.figure()
+        daily_returns = self.df.copy()
+        daily_returns[1:] = (daily_returns[1:]/daily_returns[0:-1].values) - 1
+        daily_returns[0] = 0
+        if plot_hist:
+            daily_returns.hist(bins = nBins)
+            globalStats = GlobalStats(daily_returns)
+            mean = globalStats.get_mean()
+            std = globalStats.get_std()
+            plt.axvline(mean,color = 'w', linestyle = 'dashed', linewidth = 2)
+            plt.axvline(std,color = 'r', linestyle = 'dashed', linewidth = 2)
+            plt.axvline(-std,color = 'r', linestyle = 'dashed', linewidth = 2)
+
+        if kurtosis:
+            print 'Kurtosis Value for Daily Return for stock %s: %f' %(self.stock,daily_returns.kurtosis()) 
+        return daily_returns
+
+    def get_cumulative_returns(self, plot_hist = False, nBins = 10):
+        plt.figure()
+        cumulative_returns = self.df.copy()
+        cumulative_returns = (cumulative_returns[0:]/cumulative_returns[0]) - 1
+        if plot_hist:
+            cumulative_returns.hist(bins = nBins)
+
+        return cumulative_returns
 
 
     def get_bollinger_bands(self, roll_mean, roll_std):
