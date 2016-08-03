@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import math
 
 class GlobalStats:
     def __init__(self, df):
@@ -20,6 +21,33 @@ class GlobalStats:
 
     def get_mode(self):
         return self.df.mode()
+
+    def get_sharpe_ratio(self, risk_free_return = 0., num_trading_days = 252):
+        # TODO: Make it a dataframe simple operation instead of a for loop
+        daily_returns = self.get_daily_returns()
+        daily_returns -= risk_free_return
+        globalStats = GlobalStats(daily_returns)
+        mean = globalStats.get_mean()
+        std = globalStats.get_std()
+
+        for stock in daily_returns.columns.values:
+            print 'Daily Return for Stock %s --> Mean:%f, Std. Deviation:%f\n' %(stock,mean[stock],std[stock])
+
+        print "\nSharpe Ratio (Determines Risk):"
+        sharpe_ratio = (mean/std) *  math.sqrt(num_trading_days)
+
+        return sharpe_ratio
+
+
+
+    def get_daily_returns(self):
+        daily_returns = self.df.copy()
+        daily_returns[1:] = (daily_returns[1:]/daily_returns[0:-1].values) - 1
+        daily_returns.ix[0,:] = 0
+
+        return daily_returns
+
+
 
 class RollingStats:
     def __init__(self, df, stock, window):
@@ -65,7 +93,7 @@ class RollingStats:
             plt.axvline(-std,color = 'r', linestyle = 'dashed', linewidth = 2)
 
         if kurtosis:
-            print 'Kurtosis Value for Daily Return for stock %s: %f' %(self.stock,daily_returns.kurtosis()) 
+            print 'Kurtosis Value for Daily Return for stock %s: %f' %(self.stock,daily_returns.kurtosis())
         return daily_returns
 
     def get_cumulative_returns(self, plot_hist = False, nBins = 10):

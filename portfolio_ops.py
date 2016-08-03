@@ -30,7 +30,11 @@ print "\nMedian:"
 print globalStats.get_median()
 print "\nSum:"
 print globalStats.get_sum()
+
+print globalStats.get_sharpe_ratio()
 print "\n\n"
+
+
 
 # Now od some rolling statistics
 window = 4
