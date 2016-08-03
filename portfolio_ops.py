@@ -1,13 +1,15 @@
 from harpFinance.fetcher import Fetcher
 from harpFinance.statistician import GlobalStats, RollingStats
+from harpFinance.optimizer import PortfolioOpt
 import matplotlib.pyplot as plt
 
-stockNm = ['FIT', 'YHOO', 'GOOG', 'SPY', 'GLD']
+stockNm = ['BAC','FIT','RENN','SVU', 'SIRI', 'GRPN']
+startDate = '2016-07-20'
+endDate = '2016-08-02'
 
 fetcher = Fetcher(stockNm)
 
-startDate = '2016-05-01'
-endDate = '2016-08-01'
+
 fetcher.fetch_history(startDate, endDate)
 df = fetcher.get_dataframe('Adj_Close')
 
@@ -36,9 +38,9 @@ print "\n\n"
 
 
 
-# Now od some rolling statistics
+# Now do some rolling statistics
 window = 4
-stock = 'SPY'
+stock = 'GRPN'
 rollingStats = RollingStats(df, stock, window)
 print "Rolling Statistics: (See plots)\n"
 roll_mean = rollingStats.get_rolling_mean()
@@ -53,4 +55,11 @@ rollingStats.plot_list(rolling_data)
 rollingStats.plotter(bollinger = True)
 rollingStats.get_daily_returns(plot_hist = True, nBins = 20)
 rollingStats.get_cumulative_returns(plot_hist = True, nBins = 20)
+
+
+# Portfolio Optimization (Maximize the sharpe ratio)
+portfolio_optimizer = PortfolioOpt(stockNm,(startDate, endDate))
+portfolio_optimizer.optimizePortfolio()
+print portfolio_optimizer.get_optimal_allocation()
+portfolio_optimizer.plot_optimal_portfolio()
 plt.show()
