@@ -4,7 +4,7 @@ from harpFinance.optimizer import PortfolioOpt
 import matplotlib.pyplot as plt
 
 stockNm = ['BAC','FIT','RENN','SVU', 'SIRI', 'GRPN']
-startDate = '2016-07-20'
+startDate = '2016-01-20'
 endDate = '2016-08-02'
 
 fetcher = Fetcher(stockNm)
