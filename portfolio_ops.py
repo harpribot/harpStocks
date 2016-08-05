@@ -3,7 +3,7 @@ from harpFinance.statistician import GlobalStats, RollingStats
 from harpFinance.optimizer import PortfolioOpt
 import matplotlib.pyplot as plt
 
-stockNm = ['BAC','FIT','RENN','SVU', 'SIRI', 'GRPN']
+stockNm = ['BAC','FIT','RENN', 'SIRI', 'GRPN']
 startDate = '2016-01-20'
 endDate = '2016-08-02'
 

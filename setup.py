@@ -5,6 +5,8 @@ import io
 import codecs
 import os
 import sys
+from pip.req import parse_requirements
+
 
 import harpFinance
 
@@ -20,6 +22,8 @@ def read(*filenames, **kwargs):
     return sep.join(buf)
 
 long_description = read('README.md', 'CHANGES.md')
+install_reqs = parse_requirements('requirements.txt', session=False)
+reqs = [str(ir.req) for ir in install_reqs]
 
 class PyTest(TestCommand):
     def finalize_options(self):
@@ -39,8 +43,7 @@ setup(
     license='GNU GENERAL PUBLIC LICENSE Version 3',
     author='Harshal Priyadarshi',
     tests_require=['pytest'],
-    install_requires=['yahoo-finance',
-                    ],
+    install_requires= reqs,
     cmdclass={'test': PyTest},
     author_email='harshal.priyadarshi@utexas.edu',
     description='Automated Real time Machine Learning based Stock Portfolio Manager',
